@@ -1,4 +1,5 @@
 const connectIMAP = require('./services/imapService.ts');
+import type { Request, Response } from "express";
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -28,7 +29,7 @@ async function client(){
 
 client();
 
-app.get('/health', (req, res) => {
+app.get('/health', (req:Request, res:Response) => {
     res.json({ status: 'ok' });
 });
 
