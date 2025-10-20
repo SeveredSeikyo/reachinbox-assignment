@@ -108,6 +108,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_twitter) - email@example.com
+Thanmay Sadguru Musa - thanmaysadguru5912@gmail.com
 
-Project Link: [https://github.com/your_username_/ReachOneBox](https://github.com/your_username_/ReachOneBox)
+Project Link: [https://github.com/SeveredSeikyo/reachinbox-assignment](https://github.com/SeveredSeikyo/reachinbox-assignment)
