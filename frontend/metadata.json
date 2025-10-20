@@ -1,0 +1,5 @@
+{
+  "name": "Gemini Email Client",
+  "description": "A modern, AI-powered email client interface that allows users to browse, search, and view emails categorized by an AI.",
+  "requestFramePermissions": []
+}
