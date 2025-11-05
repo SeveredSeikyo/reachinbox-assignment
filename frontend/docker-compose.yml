@@ -1,0 +1,11 @@
+# frontend/docker-compose.yml
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    container_name: email-frontend
+    ports:
+      - "3100:3000"
+    env_file:
+      - .env
