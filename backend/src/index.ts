@@ -5,8 +5,19 @@ const cors = require('cors');
 require('dotenv').config();
 const emailRouter = require('./api/emailRoute');
 
+const allowed_origin = process.env.ALLOWED_ORIGIN;
+
+const corsOptions = {
+  origin: allowed_origin,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: 'Content-Type,Authorization',
+  credentials: true, 
+  optionsSuccessStatus: 200
+};
+
+
 const app = express();
-app.use(cors());
+app.use(cors(corsOptions));
 const port = process.env.PORT || 5000;
 
 
