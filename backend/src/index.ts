@@ -8,7 +8,7 @@ import type { Request, Response } from 'express';
 
 dotenv.config();
 
-const allowed_origin = process.env.ALLOWED_ORIGIN || "https://onebox.hex86.dev";
+const allowed_origin = process.env.ALLOWED_ORIGIN;
 
 const corsOptions = {
   origin: allowed_origin,
