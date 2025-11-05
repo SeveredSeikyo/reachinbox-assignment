@@ -1,51 +1,67 @@
-const connectIMAP = require('./services/imapService.ts');
-import type { Request, Response } from "express";
+// index.ts (CommonJS version)
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const connectIMAP = require('./services/imapService.ts');
 const emailRouter = require('./api/emailRoute');
+import type { Request, Response } from 'express';
 
-const allowed_origin = process.env.ALLOWED_ORIGIN;
+dotenv.config();
+
+const allowed_origin = process.env.ALLOWED_ORIGIN || "https://onebox.hex86.dev";
 
 const corsOptions = {
   origin: allowed_origin,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: 'Content-Type,Authorization',
-  credentials: true, 
-  optionsSuccessStatus: 200
+  credentials: true,
+  optionsSuccessStatus: 200,
 };
-
 
 const app = express();
 app.use(cors(corsOptions));
+
 const port = process.env.PORT || 5000;
 
-
+// IMAP user credentials
 const user_creds_1 = {
-    accountId: process.env.IMAP_USER_1 || "",
-    user: process.env.IMAP_USER_1 || "",
-    password: process.env.IMAP_PASS_1 || ""
-}
+  accountId: process.env.IMAP_USER_1 || "",
+  user: process.env.IMAP_USER_1 || "",
+  password: process.env.IMAP_PASS_1 || ""
+};
 
 const user_creds_2 = {
-    accountId: process.env.IMAP_USER_2 || "",
-    user: process.env.IMAP_USER_2 || "",
-    password: process.env.IMAP_PASS_2 || ""
-}
+  accountId: process.env.IMAP_USER_2 || "",
+  user: process.env.IMAP_USER_2 || "",
+  password: process.env.IMAP_PASS_2 || ""
+};
 
-async function client(){
+// Async startup function
+async function startServer() {
+  try {
+    console.log("Connecting to IMAP accounts...");
     await connectIMAP(user_creds_1);
     await connectIMAP(user_creds_2);
+    console.log("IMAP connected successfully.");
+
+    // Health check route
+    app.get('/health', function (req: Request, res: Response) {
+      res.json({ status: 'ok' });
+    });
+
+    // API routes
+    app.use('/api', emailRouter);
+
+    // Start server
+    app.listen(port, function () {
+      console.log(`Server is listening on port ${port}`);
+    });
+
+  } catch (err) {
+    console.error("Failed to start server:", err);
+    process.exit(1);
+  }
 }
 
-client();
-
-app.get('/health', (req:Request, res:Response) => {
-    res.json({ status: 'ok' });
-});
-
-app.use('/api',emailRouter);
-
-app.listen(port,()=>{
-    console.log(`Server is listening on port ${port}`);
-})
+// Start the server
+startServer();
