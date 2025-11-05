@@ -1,68 +1,36 @@
 const winston = require("winston");
 const { combine, timestamp, json, errors } = winston.format;
+const path = require("path");
 
+// ensure logs folder exists
+const logsDir = path.resolve(__dirname, "../logs"); // adjust if needed
+const fs = require("fs");
+if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+}
 
-// {
-//   error: 0,
-//   warn: 1,
-//   info: 2,
-//   http: 3,
-//   verbose: 4,
-//   debug: 5,
-//   silly: 6
-// }
+function createServiceLogger(serviceName: string) {
+    return winston.createLogger({
+        level: "info",
+        format: combine(timestamp(), errors({ stack: true }), json()),
+        transports: [
+            new winston.transports.File({ filename: path.join(logsDir, `${serviceName}-standard.log`) }),
+            new winston.transports.Console() // optional, good for dev
+        ],
+        defaultMeta: { service: serviceName },
+        exceptionHandlers: [
+            new winston.transports.File({ filename: path.join(logsDir, `${serviceName}-exceptions.log`) })
+        ],
+        rejectionHandlers: [
+            new winston.transports.File({ filename: path.join(logsDir, `${serviceName}-rejections.log`) })
+        ],
+        exitOnError: false,
+        silent: false
+    });
+}
 
+const imapLogger = createServiceLogger("imap-service");
+const esLogger = createServiceLogger("es-service");
+const aiLogger = createServiceLogger("ai-service");
 
-
-const imapLogger = winston.createLogger({
-    level: "info",
-    // format: winston.format.json(),
-    format: combine(timestamp(), errors({ stack: true }), json()),
-    // transports: [ new winston.transports.Console() ]
-    transports: [ new winston.transports.File({filename: "standard.log"})],
-    defaultMeta: { service: "imap-service "},
-    exceptionHandlers: [
-        new winston.transports.File({filename: "exceptions.log"})
-    ],
-    rejectionHandlers: [
-        new winston.transports.File({filename: "rejections.log"})
-    ],
-    exitOnError: false, 
-    silent: false
-});
-
-const esLogger = winston.createLogger({
-    level: "info",
-    // format: winston.format.json(),
-    format: combine(timestamp(), errors({ stack: true }), json()),
-    // transports: [ new winston.transports.Console() ]
-    transports: [ new winston.transports.File({filename: "standard.log"})],
-    defaultMeta: { service: "es-service "},
-    exceptionHandlers: [
-        new winston.transports.File({filename: "exceptions.log"})
-    ],
-    rejectionHandlers: [
-        new winston.transports.File({filename: "rejections.log"})
-    ],
-    exitOnError: false, 
-    silent: false
-});
-
-const aiLogger = winston.createLogger({
-    level: "info",
-    // format: winston.format.json(),
-    format: combine(timestamp(), errors({ stack: true }), json()),
-    // transports: [ new winston.transports.Console() ]
-    transports: [ new winston.transports.File({filename: "standard.log"})],
-    defaultMeta: { service: "ai-service "},
-    exceptionHandlers: [
-        new winston.transports.File({filename: "exceptions.log"})
-    ],
-    rejectionHandlers: [
-        new winston.transports.File({filename: "rejections.log"})
-    ],
-    exitOnError: false, 
-    silent: false
-});
-
-module.exports = {imapLogger, esLogger, aiLogger};
+module.exports = { imapLogger, esLogger, aiLogger };
